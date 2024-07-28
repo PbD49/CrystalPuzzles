@@ -116,7 +116,7 @@ all_routers = [
     space_router,
     lesson_router,
     notification_router,
-    # check_router
+    check_router,
 ]
 
 for router in all_routers:

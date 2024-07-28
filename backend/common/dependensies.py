@@ -10,5 +10,5 @@ UserDep = Annotated[User, Depends(get_current_user())]
 AdminDep = Annotated[User, Depends(get_current_user(("admin",)))]
 SupervisorDep = Annotated[User, Depends(get_current_user(("supervisor",)))]
 TrainerDep = Annotated[User, Depends(get_current_user(("trainer",)))]
-TrainerSupervisorAdminDep = Annotated[User, Depends(get_current_user(("trainer", "admin", "supervisor")))]
+TrainerSupervisorAdminDep = Annotated[User, Depends(get_current_user(("trainer", "admin", "supervisor",)))]
 # endregion -------------------------------------------------------------------------

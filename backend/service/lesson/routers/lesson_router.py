@@ -31,7 +31,7 @@ async def get_lesson(
         lesson_id: int,
         uow: LessonUOWDep,
         lesson_service: LessonServiceDep,
-        current_user: TrainerSupervisorAdminDep,
+        current_user: UserUOWDep,
 ):
     """ admin, supervisor, trainer """
     result = await lesson_service.get(uow, lesson_id)

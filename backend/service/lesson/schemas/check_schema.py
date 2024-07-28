@@ -21,6 +21,24 @@ class CreateCheckSchema(BaseModel):
     date_add: datetime = Field(default_factory=datetime.now, hidden=True)
     date_update: datetime = Field(default_factory=datetime.now, hidden=True)
 
+
+class EditCheckSchema(BaseModel):
+    """Схема редактирования моеделей занятий"""
+    student_id: int
+    lesson_id: int
+    training_check: list[TrainingCheck]
+    date_update: datetime = Field(default_factory=datetime.now, hidden=True)
+
+
+class DeleteCheckSchema(BaseModel):
+    """Схема удаление моеделей занятий"""
+    check_id: int
+
+
+class ListCheckSchema(DeleteCheckSchema):
+    """ Схема получения моделей занятий """
+    pass
+
 #
 # class EditLessonSchema(BaseModel):
 #     """ Схема изменения моделей занятий """

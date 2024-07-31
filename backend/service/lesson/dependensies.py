@@ -11,6 +11,7 @@ from service.lesson.services.space_service import SpaceService
 from service.lesson.unit_of_work.check_uow import CheckUOW
 from service.lesson.unit_of_work.lesson_uow import LessonUOW
 from service.lesson.unit_of_work.space_uow import SpaceUOW
+from service.lesson.schemas.check_schema import CheckFilterSchema
 
 
 # region ------------------------------- Service ------------------------------------
@@ -30,5 +31,6 @@ CheckUOWDep = Annotated[AbstractUnitOfWork, Depends(CheckUOW)]
 # region ------------------------------- Filers -------------------------------------
 LessonFilterDep = Annotated[LessonFilterSchema, Depends()]
 SpaceFilterDep = Annotated[SpaceFilterSchema, Depends()]
+CheckFilterDep = Annotated[CheckFilterSchema, Depends()]
 # CheckFilterDep = Annotated[CheckFilterSchema, Depends()]
 # endregion -------------------------------------------------------------------------

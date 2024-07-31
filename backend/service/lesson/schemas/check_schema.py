@@ -1,9 +1,9 @@
 from pydantic import Field
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
-from common.schema.base_schemas import BaseModel
+from common.schema.base_schemas import BaseModel, BaseFilterSchema
 
 
 class TrainingCheck(BaseModel):
@@ -23,7 +23,7 @@ class CreateCheckSchema(BaseModel):
 
 
 class EditCheckSchema(BaseModel):
-    """Схема редактирования моеделей занятий"""
+    """Схема редактирования моделей занятий"""
     student_id: int
     lesson_id: int
     training_check: list[TrainingCheck]
@@ -31,7 +31,7 @@ class EditCheckSchema(BaseModel):
 
 
 class DeleteCheckSchema(BaseModel):
-    """Схема удаление моеделей занятий"""
+    """Схема удаление моделей занятий"""
     check_id: int
 
 
@@ -39,7 +39,28 @@ class ListCheckSchema(DeleteCheckSchema):
     """ Схема получения моделей занятий """
     pass
 
-#
+
+class CheckFilterSchema(BaseFilterSchema):
+    """ Схема фильтров для чек-листа """
+    date_add: Optional[datetime] = Field(default=None)
+    trainer: Optional[int] = Field(default=None)
+    student: Optional[int] = Field(default=None)
+
+
+class CheckSchemaForTable(BaseModel):
+    """ Схема деталей чек-листа """
+    student_list: list
+    lesson_id: int
+    training_list: list
+
+
+class CheckViewSchemaByFilters(BaseModel):
+    """ Постраничный вывод чек-листов по фильтрам """
+    page: int
+    max_page_count: int
+    count_records: int
+    records: List[CheckSchemaForTable]
+
 # class EditLessonSchema(BaseModel):
 #     """ Схема изменения моделей занятий """
 #     id: int

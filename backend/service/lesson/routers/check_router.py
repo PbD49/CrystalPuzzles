@@ -8,13 +8,15 @@ from starlette.responses import JSONResponse
 from common.dependensies import TrainerSupervisorAdminDep
 from common.schema.base_schemas import Message
 from core.logger import logger
-from service.lesson.dependensies import CheckUOWDep, CheckServiceDep
+from service.lesson.dependensies import CheckUOWDep, CheckServiceDep, CheckFilterDep
 from service.users.models import User
 from service.users.repository import UserRepository
 
 from service.identity.security import get_current_user
 from service.lesson.repositories.lesson_repository import LessonRepository
-from service.lesson.schemas.check_schema import CreateCheckSchema, EditCheckSchema, DeleteCheckSchema, ListCheckSchema
+from service.lesson.schemas.check_schema import (CreateCheckSchema, EditCheckSchema, DeleteCheckSchema, ListCheckSchema,
+                                                 CheckViewSchemaByFilters)
+
 
 check_router = APIRouter(
     prefix="/api/v1/check",
@@ -46,14 +48,14 @@ async def create_check(
 
 
 @check_router.put("/",
-            summary="Редактирование Чек-листа",
-            response_model=int,
-            responses={
+                  summary="Редактирование Чек-листа",
+                  response_model=int,
+                  responses={
                       200: {"description": "Успешная обработка данных"},
                       401: {"description": "Не авторизованный пользователь"},
                       400: {"model": Message, "description": "Некорректные данные"},
                       500: {"model": Message, "description": "Серверная ошибка"}},
-)
+                  )
 async def edit_check(
         model: EditCheckSchema,
         uow: CheckUOWDep,
@@ -68,14 +70,14 @@ async def edit_check(
 
 
 @check_router.delete("/remove/",
-            summary="Удаление Чек-листа",
-            response_model=int,
-            responses={
-                      200: {"description": "Успешная обработка данных"},
-                      401: {"description": "Не авторизованный пользователь"},
-                      400: {"model": Message, "description": "Некорректные данные"},
-                      500: {"model": Message, "description": "Серверная ошибка"}},
-)
+                     summary="Удаление Чек-листа",
+                     response_model=int,
+                     responses={
+                         200: {"description": "Успешная обработка данных"},
+                         401: {"description": "Не авторизованный пользователь"},
+                         400: {"model": Message, "description": "Некорректные данные"},
+                         500: {"model": Message, "description": "Серверная ошибка"}},
+                     )
 async def delete_check(
         model: DeleteCheckSchema,
         uow: CheckUOWDep,
@@ -90,14 +92,14 @@ async def delete_check(
 
 
 @check_router.get("/{check_id}",
-            summary="Удаление Чек-листа",
-            response_model=int,
-            responses={
+                  summary="Вывод Чек-листа по ID",
+                  response_model=int,
+                  responses={
                       200: {"description": "Успешная обработка данных"},
                       401: {"description": "Не авторизованный пользователь"},
                       400: {"model": Message, "description": "Некорректные данные"},
                       500: {"model": Message, "description": "Серверная ошибка"}},
-)
+                  )
 async def list_check(
         model: ListCheckSchema,
         uow: CheckUOWDep,
@@ -111,3 +113,23 @@ async def list_check(
     return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")
 
 
+@check_router.get("/all_lessons/",
+                  summary="Вывод всех Чек-листов",
+                  response_model=CheckViewSchemaByFilters,
+                  responses={
+                      200: {"description": "Успешная обработка данных"},
+                      401: {"description": "Не авторизованный пользователь"},
+                      400: {"model": Message, "description": "Некорректные данные"},
+                      500: {"model": Message, "description": "Серверная ошибка"}},
+                  )
+async def list_check(
+        uow: CheckUOWDep,
+        check_service: CheckServiceDep,
+        current_user: TrainerSupervisorAdminDep,
+        filters: CheckFilterDep
+):
+    """admin, supervisor, trainer"""
+    result = await check_service.get_all_by_filters(uow, filters)
+    if result:
+        return result
+    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")

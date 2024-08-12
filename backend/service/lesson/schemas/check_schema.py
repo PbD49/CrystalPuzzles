@@ -1,9 +1,10 @@
 from pydantic import Field
 
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Any
 
 from common.schema.base_schemas import BaseModel, BaseFilterSchema
+from service.lesson.schemas.lesson_schemas import LessonSchemaForTable
 
 
 class TrainingCheck(BaseModel):
@@ -30,14 +31,15 @@ class EditCheckSchema(BaseModel):
     date_update: datetime = Field(default_factory=datetime.now, hidden=True)
 
 
-class DeleteCheckSchema(BaseModel):
-    """Схема удаление моделей занятий"""
-    check_id: int
-
-
-class ListCheckSchema(DeleteCheckSchema):
-    """ Схема получения моделей занятий """
-    pass
+#
+# class DeleteCheckSchema(BaseModel):
+#     """Схема удаление моделей занятий"""
+#     check_id: int
+#
+#
+# class CheckIdSchema(DeleteCheckSchema):
+#     """ Схема получения моделей занятий """
+#     pass
 
 
 class CheckFilterSchema(BaseFilterSchema):
@@ -47,11 +49,30 @@ class CheckFilterSchema(BaseFilterSchema):
     student: Optional[int] = Field(default=None)
 
 
+class TrainingCheckShortSchema(BaseModel):
+    training_id: int
+    repetitions: int
+    assessment: int
+
+
+class LessonShortSchema(BaseModel):
+    trainer_id: int
+    space_id: int
+    trainer_comments: str
+    start: datetime
+    date_add: datetime
+    date_update: datetime
+
+
 class CheckSchemaForTable(BaseModel):
     """ Схема деталей чек-листа """
-    student_list: list
-    lesson_id: int
-    training_list: list
+    id: int
+    student_id: int
+    # lesson: LessonSchemaForTable
+    lesson: LessonShortSchema
+    date_add: datetime
+    date_update: datetime
+    # training_data: TrainingCheckShortSchema
 
 
 class CheckViewSchemaByFilters(BaseModel):

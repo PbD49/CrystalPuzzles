@@ -1,21 +1,12 @@
 from http import HTTPStatus
 
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter
 from starlette.responses import JSONResponse
 
 from common.dependensies import TrainerSupervisorAdminDep
 from common.schema.base_schemas import Message
-from core.logger import logger
 from service.lesson.dependensies import CheckUOWDep, CheckServiceDep, CheckFilterDep
-from service.users.models import User
-from service.users.repository import UserRepository
-
-from service.identity.security import get_current_user
-from service.lesson.repositories.lesson_repository import LessonRepository
-from service.lesson.schemas.check_schema import (CreateCheckSchema, EditCheckSchema, DeleteCheckSchema, ListCheckSchema,
-                                                 CheckViewSchemaByFilters)
+from service.lesson.schemas.check_schema import CreateCheckSchema, EditCheckSchema, CheckViewSchemaByFilters, CheckSchemaForTable
 
 
 check_router = APIRouter(
@@ -66,7 +57,7 @@ async def edit_check(
     result = await check_service.edit(uow, model)
     if result:
         return result
-    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")
+    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check not found")
 
 
 @check_router.delete("/remove/",
@@ -79,21 +70,21 @@ async def edit_check(
                          500: {"model": Message, "description": "Серверная ошибка"}},
                      )
 async def delete_check(
-        model: DeleteCheckSchema,
+        check_id: int,
         uow: CheckUOWDep,
         check_service: CheckServiceDep,
         current_user: TrainerSupervisorAdminDep
 ):
     """admin, supervisor, trainer"""
-    result = await check_service.delete_db(uow, model)
+    result = await check_service.delete(uow, check_id)
     if result:
         return result
-    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")
+    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check not found")
 
 
 @check_router.get("/{check_id}",
                   summary="Вывод Чек-листа по ID",
-                  response_model=int,
+                  response_model=CheckSchemaForTable,
                   responses={
                       200: {"description": "Успешная обработка данных"},
                       401: {"description": "Не авторизованный пользователь"},
@@ -101,19 +92,19 @@ async def delete_check(
                       500: {"model": Message, "description": "Серверная ошибка"}},
                   )
 async def list_check(
-        model: ListCheckSchema,
+        check_id: int,
         uow: CheckUOWDep,
         check_service: CheckServiceDep,
         current_user: TrainerSupervisorAdminDep
 ):
     """admin, supervisor, trainer"""
-    result = await check_service.get(uow, model)
+    result = await check_service.get(uow, check_id)
     if result:
         return result
-    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")
+    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check not found")
 
 
-@check_router.get("/all_lessons/",
+@check_router.get("/all_checks/",
                   summary="Вывод всех Чек-листов",
                   response_model=CheckViewSchemaByFilters,
                   responses={
@@ -132,4 +123,4 @@ async def list_check(
     result = await check_service.get_all_by_filters(uow, filters)
     if result:
         return result
-    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")
+    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check not found")

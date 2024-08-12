@@ -6,6 +6,7 @@ from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import BaseSettings
 
 
+
 class Settings(BaseSettings):
     """Настройки окружения."""
 

@@ -18,14 +18,14 @@ class CheckRepository(BaseRepository):
     async def get_all_check_by_filter(self, filters: CheckFilterSchema):
         stmt = (
             select(self.model)
-            .options(joinedload(self.model.training_data))
             .options(joinedload(self.model.lesson))
+            .options(joinedload(self.model.training_data))
             .filter(self.model.deleted.__eq__(False))
         )
         if filters.date_add:
             stmt = stmt.filter(self.model.date_add == filters.date_add.date())
         if filters.trainer:
-            stmt = await self._add_filters(stmt, trainer_id=filters.trainer)
+            stmt = await self._add_filters(stmt, lesson=filters.trainer)
         if filters.student:
             stmt = await self._add_filters(stmt, student_id=filters.student)
 

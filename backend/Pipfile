@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "*"
 uvicorn = "*"
 uvloop = "*"
 asyncpg = "*"
@@ -20,8 +19,10 @@ psycopg2-binary = "*"
 pylint = "*"
 pydantic-settings = "*"
 sqlalchemy = "*"
+fastapi = {extras = ["all"], version = "*"}
+
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.10"

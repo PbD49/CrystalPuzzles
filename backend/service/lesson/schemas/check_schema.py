@@ -16,6 +16,7 @@ class TrainingCheck(BaseModel):
 
 class CreateCheckSchema(BaseModel):
     """ Схема создания моделей занятий """
+    id: int
     student_id: int
     lesson_id: int
     training_check: list[TrainingCheck]
@@ -25,6 +26,7 @@ class CreateCheckSchema(BaseModel):
 
 class EditCheckSchema(BaseModel):
     """Схема редактирования моделей занятий"""
+    id: int
     student_id: int
     lesson_id: int
     training_check: list[TrainingCheck]

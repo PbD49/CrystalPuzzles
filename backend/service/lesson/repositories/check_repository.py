@@ -1,11 +1,13 @@
-from typing import Optional
+import json
+from typing import Optional, Union
+from uuid import UUID
 
 from sqlalchemy import insert
 
-from common.repository.base_repository import BaseRepository, TModel
+from common.repository.base_repository import BaseRepository, TModel, EditData
 from service.lesson.models import Check, Lesson
 from service.lesson.schemas.check_schema import CheckFilterSchema
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
 
 

@@ -27,6 +27,7 @@ SpaceUOWDep = Annotated[AbstractUnitOfWork, Depends(SpaceUOW)]
 CheckUOWDep = Annotated[AbstractUnitOfWork, Depends(CheckUOW)]
 TrainingCheckUOWDep = Annotated[AbstractUnitOfWork, Depends(TrainingCheckUow)]
 
+
 # endregion -------------------------------------------------------------------------
 
 

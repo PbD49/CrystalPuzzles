@@ -16,8 +16,8 @@ class TrainingCheck(BaseModel):
 
 class CreateCheckSchema(BaseModel):
     """ Схема создания моделей занятий """
-    id: int
-    student_id: int
+    # id: int
+    students_id: list[int]
     lesson_id: int
     training_check: list[TrainingCheck]
     date_add: datetime = Field(default_factory=datetime.now, hidden=True)

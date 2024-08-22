@@ -11,7 +11,7 @@ class CheckService(BaseService):
 
     async def edit_check(self, uow: CheckUOW, model: EditCheckSchema):
         data = model.model_dump()
-        result = await  super().edit(uow, data)
+        result = await super().edit(uow, data)
         return result
 
     @staticmethod

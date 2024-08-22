@@ -1,11 +1,13 @@
-from typing import Optional
+import json
+from typing import Optional, Union
+from uuid import UUID
 
 from sqlalchemy import insert
 
-from common.repository.base_repository import BaseRepository, TModel
-from service.lesson.models import Check, Lesson
+from common.repository.base_repository import BaseRepository, TModel, EditData
+from service.lesson.models import Check, Lesson, TrainingCheck
 from service.lesson.schemas.check_schema import CheckFilterSchema
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
 
 
@@ -13,9 +15,17 @@ class CheckRepository(BaseRepository):
     model = Check
 
     async def add(self, data: dict):
-        stmt = insert(self.model).values(**data).returning(self.model.id)
-        result = (await self.session.execute(stmt)).scalar_one_or_none()
-        return result
+        for student in data.get("students_id"):
+            self.session.add(self.model(
+                student_id=student,
+                lesson_id=data.get("lesson_id"),
+                training_data=[TrainingCheck(**training) for training in data.get("training_check")],
+                date_add=data.get("date_add"),
+                date_update=data.get("date_update")
+            )
+            )
+            await self.session.commit()
+        return True
 
     async def get_all_check_by_filter(self, filters: CheckFilterSchema) -> dict:
         stmt = (
@@ -28,6 +38,7 @@ class CheckRepository(BaseRepository):
             stmt = stmt.filter(self.model.date_add == filters.date_add.date())
         if filters.trainer:
             stmt = stmt.filter(self.model.lesson.has(Lesson.trainer_id == filters.trainer))
+            stmt = await self._add_filters(stmt, lesson=filters.trainer)
         if filters.student:
             stmt = await self._add_filters(stmt, student_id=filters.student)
 

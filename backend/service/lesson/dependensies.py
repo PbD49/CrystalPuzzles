@@ -12,7 +12,7 @@ from service.lesson.unit_of_work.check_uow import CheckUOW
 from service.lesson.unit_of_work.lesson_uow import LessonUOW
 from service.lesson.unit_of_work.space_uow import SpaceUOW
 from service.lesson.schemas.check_schema import CheckFilterSchema
-
+from service.lesson.unit_of_work.training_check_uow import TrainingCheckUow
 
 # region ------------------------------- Service ------------------------------------
 LessonServiceDep = Annotated[LessonService, Depends(LessonService)]
@@ -25,6 +25,9 @@ CheckServiceDep = Annotated[CheckService, Depends(CheckService)]
 LessonUOWDep = Annotated[AbstractUnitOfWork, Depends(LessonUOW)]
 SpaceUOWDep = Annotated[AbstractUnitOfWork, Depends(SpaceUOW)]
 CheckUOWDep = Annotated[AbstractUnitOfWork, Depends(CheckUOW)]
+TrainingCheckUOWDep = Annotated[AbstractUnitOfWork, Depends(TrainingCheckUow)]
+
+
 # endregion -------------------------------------------------------------------------
 
 

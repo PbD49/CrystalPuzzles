@@ -5,9 +5,8 @@ from starlette.responses import JSONResponse
 
 from common.dependensies import TrainerSupervisorAdminDep
 from common.schema.base_schemas import Message
-from service.lesson.dependensies import CheckUOWDep, CheckServiceDep, CheckFilterDep
+from service.lesson.dependensies import CheckUOWDep, CheckServiceDep, CheckFilterDep, TrainingCheckUOWDep
 from service.lesson.schemas.check_schema import CreateCheckSchema, EditCheckSchema, CheckViewSchemaByFilters, CheckSchemaForTable
-
 
 check_router = APIRouter(
     prefix="/api/v1/check",
@@ -49,9 +48,10 @@ async def create_check(
                   )
 async def edit_check(
         model: EditCheckSchema,
-        uow: CheckUOWDep,
+        uow: TrainingCheckUOWDep,
         check_service: CheckServiceDep,
-        current_user: TrainerSupervisorAdminDep
+        current_user: TrainerSupervisorAdminDep,
+
 ):
     """admin, supervisor, trainer"""
     result = await check_service.edit(uow, model)

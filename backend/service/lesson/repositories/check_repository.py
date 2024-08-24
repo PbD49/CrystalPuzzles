@@ -6,6 +6,7 @@ from sqlalchemy import insert
 
 from common.repository.base_repository import BaseRepository, TModel, EditData
 from service.lesson.models import Check, Lesson, TrainingCheck
+from service.users.models import User
 from service.lesson.schemas.check_schema import CheckFilterSchema
 from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
@@ -15,16 +16,23 @@ class CheckRepository(BaseRepository):
     model = Check
 
     async def add(self, data: dict):
+        stmt = select(self.model.lesson_id)
+        lessons = (await self.session.execute(stmt)).scalars().all()
+        if data.get("lesson_id") in lessons:
+            return
         for student in data.get("students_id"):
-            self.session.add(self.model(
-                student_id=student,
-                lesson_id=data.get("lesson_id"),
-                training_data=[TrainingCheck(**training) for training in data.get("training_check")],
-                date_add=data.get("date_add"),
-                date_update=data.get("date_update")
-            )
-            )
-            await self.session.commit()
+            stmt = select(User.role).where(User.id == student)
+            role = (await self.session.execute(stmt)).scalar_one_or_none()
+            if role == "student":
+                self.session.add(self.model(
+                    student_id=student,
+                    lesson_id=data.get("lesson_id"),
+                    training_data=[TrainingCheck(**training) for training in data.get("training_check")],
+                    date_add=data.get("date_add"),
+                    date_update=data.get("date_update")
+                )
+                )
+                await self.session.commit()
         return True
 
     async def get_all_check_by_filter(self, filters: CheckFilterSchema) -> dict:

@@ -21,3 +21,6 @@ Pipfile.lock
 ### Other ###
 app.log
 backend/.env.host
+
+
+backend/.env.template

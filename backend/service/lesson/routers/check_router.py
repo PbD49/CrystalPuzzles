@@ -6,7 +6,7 @@ from starlette.responses import JSONResponse
 from common.dependensies import TrainerSupervisorAdminDep
 from common.schema.base_schemas import Message
 from service.lesson.dependensies import CheckUOWDep, CheckServiceDep, CheckFilterDep, TrainingCheckUOWDep
-from service.lesson.schemas.check_schema import CreateCheckSchema, EditCheckSchema, CheckViewSchemaByFilters, CheckSchemaForTable
+from service.lesson.schemas.check_schema import CreateCheckSchema, PatchCheckSchema, CheckViewSchemaByFilters, CheckSchemaForTable
 
 check_router = APIRouter(
     prefix="/api/v1/check",
@@ -37,7 +37,7 @@ async def create_check(
     return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")
 
 
-@check_router.put("/",
+@check_router.patch("/{check_id}",
                   summary="Редактирование Чек-листа",
                   response_model=int,
                   responses={
@@ -47,14 +47,15 @@ async def create_check(
                       500: {"model": Message, "description": "Серверная ошибка"}},
                   )
 async def edit_check(
-        model: EditCheckSchema,
+        check_id: int,
+        model: PatchCheckSchema,
         uow: TrainingCheckUOWDep,
         check_service: CheckServiceDep,
         current_user: TrainerSupervisorAdminDep,
 
 ):
     """admin, supervisor, trainer"""
-    result = await check_service.edit(uow, model)
+    result = await check_service.patch_check(uow, model, check_id)
     if result:
         return result
     return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check not found")

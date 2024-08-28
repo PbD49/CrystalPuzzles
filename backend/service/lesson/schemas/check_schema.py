@@ -24,11 +24,11 @@ class CreateCheckSchema(BaseModel):
     date_update: datetime = Field(default_factory=datetime.now, hidden=True)
 
 
-class EditCheckSchema(BaseModel):
+class PatchCheckSchema(BaseModel):
     """Схема редактирования моделей занятий"""
-    id: int
-    student_id: int
-    lesson_id: int
+    # id: int
+    # student_id: int
+    # lesson_id: int
     training_check: list[TrainingCheck]
     date_update: datetime = Field(default_factory=datetime.now, hidden=True)
 

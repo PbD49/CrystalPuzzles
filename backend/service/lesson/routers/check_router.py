@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
 
 from common.dependensies import TrainerSupervisorAdminDep
@@ -31,7 +31,10 @@ async def create_check(
         current_user: TrainerSupervisorAdminDep
 ):
     """admin, supervisor, trainer"""
-    result = await check_service.add(uow, model)
+    try:
+        result = await check_service.add(uow, model)
+    except ValueError as e:
+        return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content=e.args)
     if result:
         return result
     return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check existing")

@@ -16,6 +16,7 @@ class Lesson(Base):
     space = relationship("Space", back_populates="lessons")
 
     trainer_comments: Mapped[str] = mapped_column(sa.Text, nullable=True)
+    status: Mapped[str] = mapped_column(sa.Text, nullable=False)
     start: Mapped[datetime] = mapped_column(sa.DateTime, nullable=False)
     deleted: Mapped[bool] = mapped_column(sa.Boolean, default=False, nullable=False)
     date_add: Mapped[datetime] = mapped_column(sa.DateTime, nullable=False)
@@ -43,6 +44,8 @@ class Check(Base):
     lesson_id: Mapped[int] = mapped_column(sa.ForeignKey("Lessons.id"), nullable=False)
     lesson = relationship("Lesson", back_populates="check")
 
+    trainer_comments: Mapped[str] = mapped_column(sa.Text, nullable=True)
+    rewards: Mapped[str] = mapped_column(sa.Text, nullable=True)
     deleted: Mapped[bool] = mapped_column(sa.Boolean, default=False, nullable=False)
     date_add: Mapped[datetime] = mapped_column(sa.DateTime, nullable=False)
     date_update: Mapped[datetime] = mapped_column(sa.DateTime, nullable=False)

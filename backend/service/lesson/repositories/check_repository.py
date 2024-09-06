@@ -16,23 +16,26 @@ class CheckRepository(BaseRepository):
     model = Check
 
     async def add(self, data: dict):
-        stmt = select(self.model.lesson_id)
-        lessons = (await self.session.execute(stmt)).scalars().all()
-        if data.get("lesson_id") in lessons:
+        data_lesson_id = data.get("lesson_id")
+        stmt = select(self.model.lesson_id).filter(self.model.lesson_id == data_lesson_id,
+                                                   self.model.deleted == False)
+        lesson_id = (await self.session.execute(stmt)).scalar_one_or_none()
+        if lesson_id:
             return
         for student in data.get("students_id"):
             stmt = select(User.role).where(User.id == student)
             role = (await self.session.execute(stmt)).scalar_one_or_none()
-            if role == "student":
-                self.session.add(self.model(
-                    student_id=student,
-                    lesson_id=data.get("lesson_id"),
-                    training_data=[TrainingCheck(**training) for training in data.get("training_check")],
-                    date_add=data.get("date_add"),
-                    date_update=data.get("date_update")
-                )
-                )
-                await self.session.commit()
+            if role != "student":
+                raise ValueError("Only students can be added")
+            self.session.add(self.model(
+                student_id=student,
+                lesson_id=data.get("lesson_id"),
+                training_data=[TrainingCheck(**training) for training in data.get("training_check")],
+                date_add=data.get("date_add"),
+                date_update=data.get("date_update")
+            )
+            )
+            await self.session.commit()
         return True
 
     async def get_all_check_by_filter(self, filters: CheckFilterSchema) -> dict:

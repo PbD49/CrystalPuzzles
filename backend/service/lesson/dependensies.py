@@ -8,6 +8,7 @@ from service.lesson.schemas.space_schemas import SpaceFilterSchema
 from service.lesson.services.check_service import CheckService
 from service.lesson.services.lesson_service import LessonService
 from service.lesson.services.space_service import SpaceService
+from service.lesson.services.training_check_service import TrainingCheckService
 from service.lesson.unit_of_work.check_uow import CheckUOW
 from service.lesson.unit_of_work.lesson_uow import LessonUOW
 from service.lesson.unit_of_work.space_uow import SpaceUOW
@@ -18,6 +19,7 @@ from service.lesson.unit_of_work.training_check_uow import TrainingCheckUow
 LessonServiceDep = Annotated[LessonService, Depends(LessonService)]
 SpaceServiceDep = Annotated[SpaceService, Depends(SpaceService)]
 CheckServiceDep = Annotated[CheckService, Depends(CheckService)]
+TrainingCheckServiceDep = Annotated[TrainingCheckService, Depends(TrainingCheckService)]
 # endregion -------------------------------------------------------------------------
 
 

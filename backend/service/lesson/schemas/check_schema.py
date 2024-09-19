@@ -54,6 +54,11 @@ class TrainingCheckShortSchema(BaseModel):
     assessment: int
 
 
+class ExerciseTrainingCheckSchema(BaseModel):
+    check_id: int
+    training_id: int
+
+
 class LessonShortSchema(BaseModel):
     trainer_id: int
     space_id: int

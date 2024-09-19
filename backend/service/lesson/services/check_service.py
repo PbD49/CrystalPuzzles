@@ -10,6 +10,7 @@ class CheckService(BaseService):
         result = await super().add(uow, data)
         return result
 
+
     @staticmethod
     async def patch_check(uow: CheckUOW, model: PatchCheckSchema, check_id: int):
         data = model.model_dump()

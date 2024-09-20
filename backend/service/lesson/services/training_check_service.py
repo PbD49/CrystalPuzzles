@@ -7,8 +7,15 @@ from service.lesson.unit_of_work.training_check_uow import TrainingCheckUow
 
 
 class TrainingCheckService(BaseService):
-    async def create_exercise(self, uow: TrainingCheckUow, model: ExerciseTrainingCheckSchema):
+    @staticmethod
+    async def create_exercise(uow: TrainingCheckUow, model: ExerciseTrainingCheckSchema):
         data = model.model_dump()
         async with uow:
             result = await uow.repo.add_exercise(data)
+            return result
+
+    @staticmethod
+    async def delete_exercise(uow: TrainingCheckUow, check_id: int, training_id: int):
+        async with uow:
+            result = await uow.repo.delete_exercise(check_id, training_id)
             return result

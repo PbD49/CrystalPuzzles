@@ -111,7 +111,7 @@ async def delete_check(
         return result
     return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check not found")
 
-@check_router.delete("/remove/exercise",
+@check_router.delete("/remove/exercise/{check_id}/{training_id}",
                      summary="Удаление упражнений Чек-листа",
                      response_model=int,
                      responses={
@@ -122,15 +122,16 @@ async def delete_check(
                      )
 async def delete_exercise_from_check_list(
         check_id: int,
-        uow: CheckUOWDep,
-        check_service: CheckServiceDep,
+        training_id: int,
+        uow: TrainingCheckUOWDep,
+        training_check_service: TrainingCheckServiceDep,
         current_user: TrainerSupervisorAdminDep
 ):
     """admin, supervisor, trainer"""
-    result = await check_service.delete(uow, check_id)
+    result = await training_check_service.delete_exercise(uow, check_id, training_id)
     if result:
         return result
-    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Check not found")
+    return JSONResponse(status_code=HTTPStatus.CONFLICT.value, content="Not found")
 
 
 @check_router.get("/{check_id}",

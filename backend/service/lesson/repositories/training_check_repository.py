@@ -1,11 +1,11 @@
 from typing import Union
 from uuid import UUID
 
+from sqlalchemy import update, insert, select, delete
 from sqlalchemy.dialects.mysql import insert
 
 from common.repository.base_repository import BaseRepository, EditData
 from service.lesson.models import TrainingCheck
-from sqlalchemy import update, insert, select
 
 
 class TrainingCheckRepository(BaseRepository):
@@ -24,19 +24,27 @@ class TrainingCheckRepository(BaseRepository):
         await self.session.commit()
         return bool(res)
 
-
-
     async def add_exercise(self, data):
         check_id = data["check_id"]
         training_id = data["training_id"]
         print(data)
         stmt = select(self.model.check_id).filter(self.model.check_id == check_id,
-                                                   self.model.training_id == training_id)
+                                                  self.model.training_id == training_id)
         exercise_check_id = (await self.session.execute(stmt)).scalar_one_or_none()
         if exercise_check_id:
             return
         stmt = (insert(self.model).values(**data)
                 .returning(self.model.check_id))
         res = (await self.session.execute(stmt)).scalar_one_or_none()
+        await self.session.commit()
+        return bool(res)
+
+    async def delete_exercise(self, check_id: int, training_id: int) -> bool | None:
+        stmt = select(self.model).filter(self.model.check_id == check_id, self.model.training_id == training_id)
+        data_exist = (await self.session.execute(stmt)).scalar_one_or_none()
+        if not data_exist:
+            return
+        stmt = delete(self.model).filter(self.model.check_id == check_id, self.model.training_id == training_id)
+        res = await self.session.execute(stmt)
         await self.session.commit()
         return bool(res)
